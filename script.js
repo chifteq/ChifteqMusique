@@ -1,7 +1,7 @@
 let songs = [
   {
     name: "Lorenzo - Je vous déteste tous (Clip Officiel)",
-    file: "Lorenzo - Je vous déteste tous (Clip Officiel).mp3"
+    file: "lorenzo.mp3"
   }
 ];
 
@@ -33,7 +33,7 @@ function render() {
 function play(i) {
   const s = songs[i];
 
-  player.src = "audio/" + encodeURIComponent(s.file);
+  player.src = encodeURIComponent(s.file);
   player.play();
 
   now.textContent = "🎵 " + s.name;
