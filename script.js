@@ -5,50 +5,60 @@ let songs = [
   }
 ];
 
-const box = document.querySelector('#songs');
-const search = document.querySelector('#search');
-const player = document.querySelector('#player');
-const now = document.querySelector('#now');
+const box = document.querySelector("#songs");
+const search = document.querySelector("#search");
+const player = document.querySelector("#player");
+const now = document.querySelector("#now");
 
 function render() {
   const q = search.value.toLowerCase();
 
-  const list = songs.filter(s =>
-    s.name.toLowerCase().includes(q)
+  const list = songs.filter(song =>
+    song.name.toLowerCase().includes(q)
   );
 
-  box.innerHTML = list.length
-    ? list.map((s, i) => `
-      <div class="song">
-        <div>
-          <b>${esc(s.name)}</b><br>
-          <small>${esc(s.file)}</small>
-        </div>
-        <button onclick="play(${i})">▶ Écouter</button>
+  if (list.length === 0) {
+    box.innerHTML = "<p>Aucune musique trouvée.</p>";
+    return;
+  }
+
+  box.innerHTML = list.map((song, index) => `
+    <div class="song">
+      <div>
+        <b>${esc(song.name)}</b><br>
+        <small>${esc(song.file)}</small>
       </div>
-    `).join('')
-    : '<p>Aucune musique trouvée.</p>';
+
+      <button onclick="play(${index})">
+        ▶ Écouter
+      </button>
+    </div>
+  `).join("");
 }
 
-function play(i) {
-  const s = songs[i];
+function play(index) {
+  const song = songs[index];
 
-  player.src = encodeURIComponent(s.file);
-  player.play();
+  player.src = "./" + encodeURIComponent(song.file);
+  player.load();
 
-  now.textContent = "🎵 " + s.name;
+  player.play().catch(error => {
+    console.log("Erreur audio :", error);
+  });
+
+  now.textContent = "🎵 " + song.name;
 }
 
-function esc(x) {
-  return x.replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  }[c]));
+function esc(text) {
+  return text.replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[character]));
 }
 
-search.addEventListener('input', render);
+search.addEventListener("input", render);
 
 render();
